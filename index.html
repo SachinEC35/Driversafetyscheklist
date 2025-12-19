@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Driver Safety Checklist</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    padding: 20px;
+}
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+h2 {
+    text-align: center;
+    color: #003366;
+}
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+.checklist-item {
+    margin-bottom: 10px;
+}
+label {
+    font-size: 15px;
+}
+input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.2);
+}
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: #003366;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+button:hover {
+    background: #0055aa;
+}
+.note {
+    margin-top: 15px;
+    font-size: 13px;
+    text-align: center;
+    color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>🚛 Driver Safety Checklist</h2>
+
+<form id="safetyForm">
+    <input type="text" id="driverName" placeholder="Driver Name" required>
+    <input type="text" id="vehicleNo" placeholder="Vehicle Number" required>
+
+    <div class="checklist-item">
+        <label><input type="checkbox" required> Valid Driving License</label>
+    </div>
+    <div class="checklist-item">
+        <label><input type="checkbox" required> Helmet / Seat Belt Worn</label>
+    </div>
+    <div class="checklist-item">
+        <label><input type="checkbox" required> Brakes, Horn & Lights OK</label>
+    </div>
+    <div class="checklist-item">
+        <label><input type="checkbox" required> Tyres in Good Condition</label>
+    </div>
+    <div class="checklist-item">
+        <label><input type="checkbox" required> No Alcohol / Drugs</label>
+    </div>
+
+    <button type="submit">Submit</button>
+</form>
+
+<div class="note">
+    Mandatory before plant entry
+</div>
+</div>
+
+<!-- Excel Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+document.getElementById("safetyForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const data = [
+        ["Date", new Date().toLocaleString()],
+        ["Driver Name", document.getElementById("driverName").value],
+        ["Vehicle Number", document.getElementById("vehicleNo").value],
+        ["License Valid", "YES"],
+        ["Seat Belt / Helmet", "YES"],
+        ["Vehicle Condition OK", "YES"],
+        ["Tyres OK", "YES"],
+        ["No Alcohol / Drugs", "YES"]
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Checklist");
+
+    XLSX.writeFile(workbook, "Driver_Safety_Checklist.xlsx");
+
+    alert("Checklist submitted. Excel downloaded.");
+    this.reset();
+});
+</script>
+
+</body>
+</html>
