@@ -1,127 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Driver Safety Checklist</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Safety Checklist</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        h2 { color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        .checklist-item { display: flex; align-items: center; margin-bottom: 15px; padding: 10px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; }
+        .checklist-item:hover { background-color: #fafafa; }
+        
+        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 15px; cursor: pointer; }
+        label { cursor: pointer; flex-grow: 1; font-weight: 500; }
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-    padding: 20px;
-}
-.container {
-    max-width: 600px;
-    margin: auto;
-    background: #fff;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-h2 {
-    text-align: center;
-    color: #003366;
-}
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0 15px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-.checklist-item {
-    margin-bottom: 10px;
-}
-label {
-    font-size: 15px;
-}
-input[type="checkbox"] {
-    margin-right: 8px;
-    transform: scale(1.2);
-}
-button {
-    width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    background: #003366;
-    color: #fff;
-    border: none;
-    font-size: 16px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-button:hover {
-    background: #0055aa;
-}
-.note {
-    margin-top: 15px;
-    font-size: 13px;
-    text-align: center;
-    color: #555;
-}
-</style>
+        button {
+            width: 100%; padding: 15px; border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: bold; color: white;
+            background-color: #ccc; cursor: not-allowed; transition: 0.3s;
+        }
+
+        button.enabled { background-color: #28a745; cursor: pointer; }
+
+        /* QR panel */
+        .qr-panel {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 16px 0 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .qr-panel img {
+            width: 140px;
+            height: 140px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .qr-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 150px;
+        }
+        .qr-actions button {
+            padding: 8px 12px; font-size: 0.95rem; border-radius: 8px; border: 1px solid #ddd; background: #fff; cursor: pointer;
+        }
+        .qr-url {
+            font-size: 0.85rem; color: #444; background: #f8f8f8; padding: 8px; border-radius: 6px; overflow-wrap: anywhere;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
-<h2>🚛 Driver Safety Checklist</h2>
-
-<form id="safetyForm">
-    <input type="text" id="driverName" placeholder="Driver Name" required>
-    <input type="text" id="vehicleNo" placeholder="Vehicle Number" required>
-
-    <div class="checklist-item">
-        <label><input type="checkbox" required> Valid Driving License</label>
+<div class="card">
+    <h2>🚜 Vehicle Safety Checklist</h2>
+    
+    <!-- QR Panel: scan to open this checklist -->
+    <div class="qr-panel" id="qrPanel">
+        <img id="qrImg" alt="QR code to open checklist">
+        <div class="qr-actions">
+            <div class="qr-url" id="qrUrl" title="Checklist link"></div>
+            <button id="copyLinkBtn">Copy Link</button>
+            <button id="openLinkBtn">Open Link</button>
+            <button id="downloadQrBtn">Download QR</button>
+        </div>
     </div>
+    
     <div class="checklist-item">
-        <label><input type="checkbox" required> Helmet / Seat Belt Worn</label>
-    </div>
-    <div class="checklist-item">
-        <label><input type="checkbox" required> Brakes, Horn & Lights OK</label>
-    </div>
-    <div class="checklist-item">
-        <label><input type="checkbox" required> Tyres in Good Condition</label>
-    </div>
-    <div class="checklist-item">
-        <label><input type="checkbox" required> No Alcohol / Drugs</label>
+        <input type="checkbox" id="brake" class="safety-check">
+        <label for="brake">A. Brake System Check</label>
     </div>
 
-    <button type="submit">Submit</button>
-</form>
+    <div class="checklist-item">
+        <input type="checkbox" id="fuel" class="safety-check">
+        <label for="fuel">B. Fuel / Power Level</label>
+    </div>
 
-<div class="note">
-    Mandatory before plant entry
+    <div class="checklist-item">
+        <input type="checkbox" id="mirror" class="safety-check">
+        <label for="mirror">C. Mirrors & Visibility</label>
+    </div>
+
+    <div class="checklist-item">
+        <input type="checkbox" id="seatbelt" class="safety-check">
+        <label for="seatbelt">D. Seatbelt Functionality</label>
+    </div>
+
+    <div class="checklist-item">
+        <input type="checkbox" id="tyre" class="safety-check">
+        <label for="tyre">E. All Wheel Tyre Condition</label>
+    </div>
+
+    <button id="confirmBtn" disabled>CONFIRM & START SHIFT</button>
 </div>
-</div>
-
-<!-- Excel Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script>
-document.getElementById("safetyForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+    const checkboxes = document.querySelectorAll('.safety-check');
+    const confirmBtn = document.getElementById('confirmBtn');
 
-    const data = [
-        ["Date", new Date().toLocaleString()],
-        ["Driver Name", document.getElementById("driverName").value],
-        ["Vehicle Number", document.getElementById("vehicleNo").value],
-        ["License Valid", "YES"],
-        ["Seat Belt / Helmet", "YES"],
-        ["Vehicle Condition OK", "YES"],
-        ["Tyres OK", "YES"],
-        ["No Alcohol / Drugs", "YES"]
-    ];
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            // Check if every checkbox in the list is checked
+            const allChecked = Array.from(checkboxes).every(c => c.checked);
+            
+            if (allChecked) {
+                confirmBtn.disabled = false;
+                confirmBtn.classList.add('enabled');
+            } else {
+                confirmBtn.disabled = true;
+                confirmBtn.classList.remove('enabled');
+            }
+        });
+    });
 
-    const worksheet = XLSX.utils.aoa_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Checklist");
+    confirmBtn.addEventListener('click', () => {
+        alert("✅ Safety Checklist Submitted. You may proceed.");
+    });
 
-    XLSX.writeFile(workbook, "Driver_Safety_Checklist.xlsx");
+    // QR panel functionality
+    (function(){
+        const qrImg = document.getElementById('qrImg');
+        const qrUrlEl = document.getElementById('qrUrl');
+        const copyBtn = document.getElementById('copyLinkBtn');
+        const openBtn = document.getElementById('openLinkBtn');
+        const dlBtn = document.getElementById('downloadQrBtn');
 
-    alert("Checklist submitted. Excel downloaded.");
-    this.reset();
-});
+        // Build QR image URL using Google's Chart API (simple, no deps).
+        function makeQrSrc(url, size = 300){
+            return 'https://chart.googleapis.com/chart?cht=qr&chs=' + size + 'x' + size + '&chl=' + encodeURIComponent(url);
+        }
+
+        const pageUrl = window.location.href;
+        qrUrlEl.textContent = pageUrl;
+        qrImg.src = makeQrSrc(pageUrl, 300);
+        qrImg.alt = 'QR for this checklist';
+
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(pageUrl);
+                copyBtn.textContent = 'Copied!';
+                setTimeout(()=>copyBtn.textContent = 'Copy Link', 1500);
+            } catch (err) {
+                // Fallback: select and prompt
+                const ta = document.createElement('textarea'); ta.value = pageUrl; document.body.appendChild(ta); ta.select();
+                try { document.execCommand('copy'); copyBtn.textContent = 'Copied!'; } catch(e){ alert('Copy failed, please copy manually:\n' + pageUrl); }
+                ta.remove();
+                setTimeout(()=>copyBtn.textContent = 'Copy Link', 1500);
+            }
+        });
+
+        openBtn.addEventListener('click', () => {
+            window.open(pageUrl, '_blank');
+        });
+
+        dlBtn.addEventListener('click', () => {
+            // Download by opening the QR image URL in a new tab with download suggestion
+            const src = makeQrSrc(pageUrl, 800);
+            // Create an anchor and trigger download. Note: some browsers may ignore download for cross-origin URLs.
+            const a = document.createElement('a');
+            a.href = src;
+            a.download = 'checklist-qr.png';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            // also open in new tab as fallback
+            setTimeout(()=>window.open(src, '_blank'), 200);
+        });
+    })();
 </script>
 
 </body>
