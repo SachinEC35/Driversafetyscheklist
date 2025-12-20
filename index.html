@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehicle Safety Checklist</title>
     <style>
-        body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        h2 { color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    * { box-sizing: border-box; }
+    body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; display:flex; justify-content:center; }
+    /* card centered horizontally and slightly wider for professional layout */
+    .card { background: white; padding: 22px; border-radius: 12px; box-shadow: 0 6px 14px rgba(0,0,0,0.08); max-width: 640px; width: 100%; margin: 32px auto; }
+        h2 { color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; text-align: center; }
         
         .checklist-item { display: flex; align-items: center; margin-bottom: 15px; padding: 10px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; }
         .checklist-item:hover { background-color: #fafafa; }
@@ -51,21 +53,46 @@
         .qr-url {
             font-size: 0.85rem; color: #444; background: #f8f8f8; padding: 8px; border-radius: 6px; overflow-wrap: anywhere;
         }
+        /* top company logo */
+        .company-top-logo { display:block; margin: 0 auto 12px; width:160px; height:auto; object-fit:contain; }
+    /* placeholders form - stacked vertically for neat layout */
+    .info-form { margin: 12px 0 16px; display: block; gap: 8px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .form-field { width: 100%; margin-bottom: 8px; }
+    .form-field label { display:block; font-size:0.85rem; color:#333; margin-bottom:4px; }
+    /* align placeholder text with checklist label text (space for checkbox + gap) */
+    /* align outer edges with checklist boxes: inputs use normal horizontal padding, no extra left indent */
+    .form-field input { width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:6px; font-size:0.95rem; }
+
+        /* center the checklist items within the card for neat layout */
+        .checklist-item { max-width: 520px; margin-left: auto; margin-right: auto; }
+
+        @media (max-width: 520px) {
+            .card { padding: 18px; }
+            .form-field { flex: 0 0 100%; }
+            .checklist-item { margin-left: 0; margin-right: 0; }
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>🚜 Vehicle Safety Checklist</h2>
-    
-    <!-- QR Panel: scan to open this checklist -->
-    <div class="qr-panel" id="qrPanel">
-        <img id="qrImg" alt="QR code to open checklist">
-        <div class="qr-actions">
-            <div class="qr-url" id="qrUrl" title="Checklist link"></div>
-            <button id="copyLinkBtn">Copy Link</button>
-            <button id="openLinkBtn">Open Link</button>
-            <button id="downloadQrBtn">Download QR</button>
+    <!-- Company logo at top -->
+    <img src="TMEElogo.jpeg" alt="Company logo" class="company-top-logo">
+    <h2>Vehicle Safety Checklist</h2>
+
+    <!-- Operator / vehicle / shift placeholders -->
+    <div class="info-form">
+        <div class="form-field">
+            <label for="operatorName">Operator Name</label>
+            <input type="text" id="operatorName" placeholder="Operator name">
+        </div>
+        <div class="form-field">
+            <label for="vehicleNo">Vehicle No.</label>
+            <input type="text" id="vehicleNo" placeholder="Vehicle number">
+        </div>
+        <div class="form-field">
+            <label for="shift">Shift</label>
+            <input type="text" id="shift" placeholder="Shift (e.g., Day / Night)">
         </div>
     </div>
     
@@ -117,59 +144,13 @@
     });
 
     confirmBtn.addEventListener('click', () => {
-        alert("✅ Safety Checklist Submitted. You may proceed.");
+        const op = document.getElementById('operatorName').value || '[not provided]';
+        const veh = document.getElementById('vehicleNo').value || '[not provided]';
+        const shift = document.getElementById('shift').value || '[not provided]';
+        alert(`✅ Safety Checklist Submitted.\nOperator: ${op}\nVehicle: ${veh}\nShift: ${shift}`);
     });
 
-    // QR panel functionality
-    (function(){
-        const qrImg = document.getElementById('qrImg');
-        const qrUrlEl = document.getElementById('qrUrl');
-        const copyBtn = document.getElementById('copyLinkBtn');
-        const openBtn = document.getElementById('openLinkBtn');
-        const dlBtn = document.getElementById('downloadQrBtn');
-
-        // Build QR image URL using Google's Chart API (simple, no deps).
-        function makeQrSrc(url, size = 300){
-            return 'https://chart.googleapis.com/chart?cht=qr&chs=' + size + 'x' + size + '&chl=' + encodeURIComponent(url);
-        }
-
-        const pageUrl = window.location.href;
-        qrUrlEl.textContent = pageUrl;
-        qrImg.src = makeQrSrc(pageUrl, 300);
-        qrImg.alt = 'QR for this checklist';
-
-        copyBtn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(pageUrl);
-                copyBtn.textContent = 'Copied!';
-                setTimeout(()=>copyBtn.textContent = 'Copy Link', 1500);
-            } catch (err) {
-                // Fallback: select and prompt
-                const ta = document.createElement('textarea'); ta.value = pageUrl; document.body.appendChild(ta); ta.select();
-                try { document.execCommand('copy'); copyBtn.textContent = 'Copied!'; } catch(e){ alert('Copy failed, please copy manually:\n' + pageUrl); }
-                ta.remove();
-                setTimeout(()=>copyBtn.textContent = 'Copy Link', 1500);
-            }
-        });
-
-        openBtn.addEventListener('click', () => {
-            window.open(pageUrl, '_blank');
-        });
-
-        dlBtn.addEventListener('click', () => {
-            // Download by opening the QR image URL in a new tab with download suggestion
-            const src = makeQrSrc(pageUrl, 800);
-            // Create an anchor and trigger download. Note: some browsers may ignore download for cross-origin URLs.
-            const a = document.createElement('a');
-            a.href = src;
-            a.download = 'checklist-qr.png';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            // also open in new tab as fallback
-            setTimeout(()=>window.open(src, '_blank'), 200);
-        });
-    })();
+    // (QR panel removed) — index now shows company logo and operator inputs above checklist
 </script>
 
 </body>
