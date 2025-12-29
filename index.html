@@ -1,156 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Safety Checklist</title>
-    <style>
-    * { box-sizing: border-box; }
-    body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; display:flex; justify-content:center; }
-    /* card centered horizontally and slightly wider for professional layout */
-    .card { background: white; padding: 22px; border-radius: 12px; box-shadow: 0 6px 14px rgba(0,0,0,0.08); max-width: 640px; width: 100%; margin: 32px auto; }
-        h2 { color: #333; font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; text-align: center; }
-        
-        .checklist-item { display: flex; align-items: center; margin-bottom: 15px; padding: 10px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; }
-        .checklist-item:hover { background-color: #fafafa; }
-        
-        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 15px; cursor: pointer; }
-        label { cursor: pointer; flex-grow: 1; font-weight: 500; }
-
-        button {
-            width: 100%; padding: 15px; border: none; border-radius: 8px;
-            font-size: 1rem; font-weight: bold; color: white;
-            background-color: #ccc; cursor: not-allowed; transition: 0.3s;
-        }
-
-        button.enabled { background-color: #28a745; cursor: pointer; }
-
-        /* QR panel */
-        .qr-panel {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            margin: 16px 0 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .qr-panel img {
-            width: 140px;
-            height: 140px;
-            border-radius: 8px;
-            background: white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-        .qr-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            min-width: 150px;
-        }
-        .qr-actions button {
-            padding: 8px 12px; font-size: 0.95rem; border-radius: 8px; border: 1px solid #ddd; background: #fff; cursor: pointer;
-        }
-        .qr-url {
-            font-size: 0.85rem; color: #444; background: #f8f8f8; padding: 8px; border-radius: 6px; overflow-wrap: anywhere;
-        }
-        /* top company logo */
-        .company-top-logo { display:block; margin: 0 auto 12px; width:160px; height:auto; object-fit:contain; }
-    /* placeholders form - stacked vertically for neat layout */
-    .info-form { margin: 12px 0 16px; display: block; gap: 8px; max-width: 520px; margin-left: auto; margin-right: auto; }
-    .form-field { width: 100%; margin-bottom: 8px; }
-    .form-field label { display:block; font-size:0.85rem; color:#333; margin-bottom:4px; }
-    /* align placeholder text with checklist label text (space for checkbox + gap) */
-    /* align outer edges with checklist boxes: inputs use normal horizontal padding, no extra left indent */
-    .form-field input { width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:6px; font-size:0.95rem; }
-
-        /* center the checklist items within the card for neat layout */
-        .checklist-item { max-width: 520px; margin-left: auto; margin-right: auto; }
-
-        @media (max-width: 520px) {
-            .card { padding: 18px; }
-            .form-field { flex: 0 0 100%; }
-            .checklist-item { margin-left: 0; margin-right: 0; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Driver Safety Checklist</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+    #company-logo {
+      display: block;
+      margin: 12px auto;
+      max-width: 220px;
+      height: auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+      width: 100%;
+      max-width: 460px;
+    }
+    input[type="text"], select {
+      width: 100%;
+      max-width: 460px;
+      padding: 8px;
+      box-sizing: border-box;
+      margin-top: 6px;
+    }
+    .check {
+      margin-right: 8px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      max-width: 460px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      color: #666666;
+      cursor: not-allowed;
+    }
+    button.enabled {
+      background-color: #28a745;
+      color: #ffffff;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+<h2></h2>
 
-<div class="card">
-    <!-- Company logo at top -->
-    <img src="TMEElogo.jpeg" alt="Company logo" class="company-top-logo">
-    <h2>Vehicle Safety Checklist</h2>
+<img id="company-logo" src="TMEElogo.jpeg" alt="Company Logo">
 
-    <!-- Operator / vehicle / shift placeholders -->
-    <div class="info-form">
-        <div class="form-field">
-            <label for="operatorName">Operator Name</label>
-            <input type="text" id="operatorName" placeholder="Operator name">
-        </div>
-        <div class="form-field">
-            <label for="vehicleNo">Vehicle No.</label>
-            <input type="text" id="vehicleNo" placeholder="Vehicle number">
-        </div>
-        <div class="form-field">
-            <label for="shift">Shift</label>
-            <input type="text" id="shift" placeholder="Shift (e.g., Day / Night)">
-        </div>
-    </div>
-    
-    <div class="checklist-item">
-        <input type="checkbox" id="brake" class="safety-check">
-        <label for="brake">A. Brake System Check</label>
-    </div>
+<h2>Driver Safety Checklist</h2>
 
-    <div class="checklist-item">
-        <input type="checkbox" id="fuel" class="safety-check">
-        <label for="fuel">B. Fuel / Power Level</label>
-    </div>
+<!-- Operator Name -->
+<label>Operator Name</label>
+<input type="text" id="operator" placeholder="Enter operator name">
 
-    <div class="checklist-item">
-        <input type="checkbox" id="mirror" class="safety-check">
-        <label for="mirror">C. Mirrors & Visibility</label>
-    </div>
+<!-- Vehicle Dropdown -->
+<label>Vehicle ID</label>
+<select id="vehicle">
+  <option value="">Select Vehicle</option>
+  <option value="JH05123">JH05123</option>
+  <option value="JH05124">JH05124</option>
+  <option value="JH05125">JH05125</option>
+  <option value="JH05126">JH05126</option>
+  <option value="JH05AB123">JH05AB123</option>
+  <option value="JHK02">JHK02</option>
+</select>
 
-    <div class="checklist-item">
-        <input type="checkbox" id="seatbelt" class="safety-check">
-        <label for="seatbelt">D. Seatbelt Functionality</label>
-    </div>
+<!-- Checklist -->
+<label>
+  <input type="checkbox" class="check"> Break System Check
+</label>
+<label>
+  <input type="checkbox" class="check"> Fuel Level OK
+</label>
+<label>
+  <input type="checkbox" class="check"> Horn OK
+</label>
+<label>
+  <input type="checkbox" class="check"> All wheel Tyres Condition OK
+</label>
 
-    <div class="checklist-item">
-        <input type="checkbox" id="tyre" class="safety-check">
-        <label for="tyre">E. All Wheel Tyre Condition</label>
-    </div>
-
-    <button id="confirmBtn" disabled>CONFIRM & START SHIFT</button>
-</div>
+<!-- Confirm Button -->
+<button id="confirmBtn" onclick="submitChecklist()" disabled>Confirm & START SHIFT</button>
 
 <script>
-    const checkboxes = document.querySelectorAll('.safety-check');
-    const confirmBtn = document.getElementById('confirmBtn');
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbxv8RyofgsSbbu7shQuZt87niWjwXIT4JBBXFMQUSpX5ZVrDugCMjh2tJrx_spFoTf-eg/exec";
 
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            // Check if every checkbox in the list is checked
-            const allChecked = Array.from(checkboxes).every(c => c.checked);
-            
-            if (allChecked) {
-                confirmBtn.disabled = false;
-                confirmBtn.classList.add('enabled');
-            } else {
-                confirmBtn.disabled = true;
-                confirmBtn.classList.remove('enabled');
-            }
-        });
-    });
+function submitChecklist() {
+  const operator = document.getElementById("operator").value.trim();
+  const vehicle = document.getElementById("vehicle").value;
+  const checks = document.querySelectorAll(".check");
 
-    confirmBtn.addEventListener('click', () => {
-        const op = document.getElementById('operatorName').value || '[not provided]';
-        const veh = document.getElementById('vehicleNo').value || '[not provided]';
-        const shift = document.getElementById('shift').value || '[not provided]';
-        alert(`✅ Safety Checklist Submitted.\nOperator: ${op}\nVehicle: ${veh}\nShift: ${shift}`);
-    });
+  if (!operator || !vehicle) {
+    alert("Please enter operator name and select vehicle");
+    return;
+  }
 
-    // (QR panel removed) — index now shows company logo and operator inputs above checklist
+  let allChecked = true;
+  checks.forEach(c => {
+    if (!c.checked) allChecked = false;
+  });
+
+  const status = allChecked ? "Approved" : "NotApproved";
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      operator: operator,
+      vehicle: vehicle,
+      status: status
+    })
+  });
+}
+
+function updateConfirmButton() {
+  const checks = document.querySelectorAll('.check');
+  let allChecked = true;
+  checks.forEach(c => { if (!c.checked) allChecked = false; });
+  const btn = document.getElementById('confirmBtn');
+  if (btn) {
+    btn.disabled = !allChecked;
+    btn.classList.toggle('enabled', allChecked);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const checks = document.querySelectorAll('.check');
+  checks.forEach(c => c.addEventListener('change', updateConfirmButton));
+  updateConfirmButton();
+});
 </script>
 
 </body>
