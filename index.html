@@ -1,156 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Driver Safety Checklist</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 500px;
-      margin: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-    }
-    #company-logo {
-      display: block;
-      margin: 12px auto;
-      max-width: 220px;
-      height: auto;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      text-align: left;
-      width: 100%;
-      max-width: 460px;
-    }
-    input[type="text"], select {
-      width: 100%;
-      max-width: 460px;
-      padding: 8px;
-      box-sizing: border-box;
-      margin-top: 6px;
-    }
-    .check {
-      margin-right: 8px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px;
-      width: 100%;
-      max-width: 460px;
-      font-size: 16px;
-      background-color: #007bff;
-      color: #ffffff;
-      border: none;
-      border-radius: 4px;
-    }
-    button:disabled {
-      background-color: #cccccc;
-      color: #666666;
-      cursor: not-allowed;
-    }
-    button.enabled {
-      background-color: #28a745;
-      color: #ffffff;
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
-<h2></h2>
-
-<img id="company-logo" src="TMEElogo.jpeg" alt="Company Logo">
 
 <h2>Driver Safety Checklist</h2>
 
-<!-- Operator Name -->
-<label>Operator Name</label>
-<input type="text" id="operator" placeholder="Enter operator name">
+<label>Operator Name:</label><br>
+<input type="text" id="operator" required><br><br>
 
-<!-- Vehicle Dropdown -->
-<label>Vehicle ID</label>
+<label>Vehicle ID:</label><br>
 <select id="vehicle">
-  <option value="">Select Vehicle</option>
-  <option value="JH05123">JH05123</option>
-  <option value="JH05124">JH05124</option>
-  <option value="JH05125">JH05125</option>
-  <option value="JH05126">JH05126</option>
-  <option value="JH05AB123">JH05AB123</option>
-  <option value="JHK02">JHK02</option>
-</select>
+  <option value="JH05AB1234">JH05AB1234</option>
+  <option value="JH05CD5678">JH05CD5678</option>
+   <option value="JH05CD5678">JH05EE7061</option>
+   <option value="JH05CD5678">JH05EF9800</option>
+</select><br><br>
 
-<!-- Checklist -->
-<label>
-  <input type="checkbox" class="check"> Break System Check
-</label>
-<label>
-  <input type="checkbox" class="check"> Fuel Level OK
-</label>
-<label>
-  <input type="checkbox" class="check"> Horn OK
-</label>
-<label>
-  <input type="checkbox" class="check"> All wheel Tyres Condition OK
-</label>
+<input type="checkbox" id="brake"> Brakes OK<br>
+<input type="checkbox" id="light"> Lights OK<br>
+<input type="checkbox" id="horn"> Horn OK<br>
+<input type="checkbox" id="tyre"> Tyres OK<br><br>
 
-<!-- Confirm Button -->
-<button id="confirmBtn" onclick="submitChecklist()" disabled>Confirm & START SHIFT</button>
+<button onclick="submitChecklist()">Confirm</button>
 
 <script>
-const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbxv8RyofgsSbbu7shQuZt87niWjwXIT4JBBXFMQUSpX5ZVrDugCMjh2tJrx_spFoTf-eg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwhSYzfbG92FuJ2M_7BGAdYimk8snLOvsYF7PYkinfZ9-44dM2m37Xm9v6q-J4c43sIw/exec";
 
 function submitChecklist() {
-  const operator = document.getElementById("operator").value.trim();
+  const operator = document.getElementById("operator").value;
   const vehicle = document.getElementById("vehicle").value;
-  const checks = document.querySelectorAll(".check");
 
-  if (!operator || !vehicle) {
-    alert("Please enter operator name and select vehicle");
-    return;
-  }
-
-  let allChecked = true;
-  checks.forEach(c => {
-    if (!c.checked) allChecked = false;
-  });
-
-  const status = allChecked ? "Approved" : "NotApproved";
+  const approved =
+    document.getElementById("brake").checked &&
+    document.getElementById("light").checked &&
+    document.getElementById("horn").checked &&
+    document.getElementById("tyre").checked;
 
   fetch(SCRIPT_URL, {
     method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify({
       operator: operator,
       vehicle: vehicle,
-      status: status
+      approved: approved
     })
+  })
+  .then(res => res.json())
+  .then(() => {
+    alert(approved ? "Checklist Approved" : "Checklist Not Approved");
   });
-alert("vehicle safety checklist submitted successfully");
 }
-
-function updateConfirmButton() {
-  const checks = document.querySelectorAll('.check');
-  let allChecked = true;
-  checks.forEach(c => { if (!c.checked) allChecked = false; });
-  const btn = document.getElementById('confirmBtn');
-  if (btn) {
-    btn.disabled = !allChecked;
-    btn.classList.toggle('enabled', allChecked);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const checks = document.querySelectorAll('.check');
-  checks.forEach(c => c.addEventListener('change', updateConfirmButton));
-  updateConfirmButton();
-});
 </script>
 
 </body>
