@@ -82,16 +82,19 @@
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxss-QB-DzoOhxArBOdGEg769WZp2x5m0FD17PA0eu8MwCmr-aNsNg6IbW01jh6bgnS/exec'; // Replace with your Deployed URL
 
     document.getElementById('checklistForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const btn = e.target.querySelector('button');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+    e.preventDefault();
+    
+    // Grab the value CURRENTLY selected in the dropdown
+    const selectedVehicle = document.getElementById('vehicleSelect').value;
 
-        const data = {
-            v_id: vehicleId,
-            operator: document.getElementById('operator').value,
-            status: "Approved"
-        };
+    const data = {
+        v_id: selectedVehicle, // This replaces the "Unknown"
+        operator: document.getElementById('operator').value,
+        status: "Approved"
+    };
+
+    // ... rest of your fetch code ...
+});
 
         fetch(scriptURL, {
             method: 'POST',
