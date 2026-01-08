@@ -81,38 +81,48 @@
 
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxss-QB-DzoOhxArBOdGEg769WZp2x5m0FD17PA0eu8MwCmr-aNsNg6IbW01jh6bgnS/exec'; // Replace with your Deployed URL
 
+   <script>
+    const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL'; // Ensure this is your current Web App URL
+
     document.getElementById('checklistForm').addEventListener('submit', e => {
-    e.preventDefault();
-    
-    // Grab the value CURRENTLY selected in the dropdown
-    const selectedVehicle = document.getElementById('vehicleSelect').value;
+        e.preventDefault();
+        
+        // 1. GET THE VALUES AT THE MOMENT OF SUBMISSION
+        const vehicleDropdown = document.getElementById('vehicleSelect');
+        const selectedVehicle = vehicleDropdown.value;
+        const operatorName = document.getElementById('operator').value;
 
-    const data = {
-        v_id: selectedVehicle, // This replaces the "Unknown"
-        operator: document.getElementById('operator').value,
-        status: "Approved"
-    };
+        // 2. LOG TO CONSOLE FOR TESTING (Press F12 to see this)
+        console.log("Submitting for:", selectedVehicle);
 
-    // ... rest of your fetch code ...
-});
+        const btn = e.target.querySelector('button');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
+        // 3. CONSTRUCT THE DATA OBJECT
+        const data = {
+            v_id: selectedVehicle,
+            operator: operatorName,
+            status: "Approved"
+        };
+
+        // 4. SEND TO GOOGLE
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // Required for Google Scripts
+            mode: 'no-cors', 
             cache: 'no-cache',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         }).then(() => {
-            alert("Safety Status Approved! You may now proceed to biometric verification.");
+            alert("Authorized! Ignition enabled for " + selectedVehicle);
             btn.innerHTML = 'AUTHORIZED';
-            btn.style.backgroundColor = '#2c3e50';
         }).catch(error => {
             console.error('Error!', error.message);
-            alert("Connection error. Try again.");
             btn.disabled = false;
         });
     });
 </script>
+
 
 </body>
 </html>
