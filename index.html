@@ -1,59 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Driver Safety Checklist</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Safety Verification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+        .card { border-radius: 15px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .status-header { background: #2c3e50; color: white; border-radius: 15px 15px 0 0; padding: 20px; }
+        .btn-submit { background: #27ae60; border: none; padding: 12px; font-weight: bold; transition: 0.3s; }
+        .btn-submit:hover { background: #219150; transform: translateY(-2px); }
+        .form-check-input:checked { background-color: #27ae60; border-color: #27ae60; }
+    </style>
 </head>
 <body>
 
-<h2>Driver Safety Checklist</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="status-header text-center">
+                    <i class="fas fa-hard-hat fa-3x mb-3"></i>
+                    <h3>Vehicle Safety Checklist</h3>
+                    <p id="vehicleDisplay" class="mb-0 opacity-75">Vehicle ID: Loading...</p>
+                </div>
+                <div class="card-body p-4">
+                    <form id="checklistForm">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Operator Name</label>
+                            <input type="text" id="operator" class="form-control" placeholder="Enter Full Name" required>
+                        </div>
 
-<label>Operator Name:</label><br>
-<input type="text" id="operator" required><br><br>
+                        <h6 class="fw-bold mb-3 text-muted">Pre-Operation Inspection</h6>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="check1" required>
+                            <label class="form-check-label">Brakes & Steering functional</label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="check2" required>
+                            <label class="form-check-label">Tyre pressure & condition checked</label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="check3" required>
+                            <label class="form-check-label">Lights & Alarms working</label>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="check4" required>
+                            <label class="form-check-label">No visible oil/fluid leaks</label>
+                        </div>
 
-<label>Vehicle ID:</label><br>
-<select id="vehicle">
-  <option value="JH05AB1234">JH05AB1234</option>
-  <option value="JH05CD5678">JH05CD5678</option>
-   <option value="JH05CD5678">JH05EE7061</option>
-   <option value="JH05CD5678">JH05EF9800</option>
-</select><br><br>
-
-<input type="checkbox" id="brake"> Brakes OK<br>
-<input type="checkbox" id="light"> Lights OK<br>
-<input type="checkbox" id="horn"> Horn OK<br>
-<input type="checkbox" id="tyre"> Tyres OK<br><br>
-
-<button onclick="submitChecklist()">Confirm</button>
+                        <button type="submit" class="btn btn-success w-100 btn-submit">
+                            <i class="fas fa-check-circle me-2"></i> AUTHORIZE IGNITION
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <p class="text-center mt-4 text-muted small">Systems secured by IoT Safety Protocol v2.0</p>
+        </div>
+    </div>
+</div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7Q1DdDCFNSwtx0pKSy4x8ILaMiy65ZXm87xfrDNBSje2H_OJDsI1lr2uK7rm4WjL2Gg/exec?vehicleId=" + vehicleId;
-  
+    // Get Vehicle ID from URL (?v_id=FL-01)
+    const urlParams = new URLSearchParams(window.location.search);
+    const vehicleId = urlParams.get('v_id') || "Unknown";
+    document.getElementById('vehicleDisplay').innerText = "Vehicle ID: " + vehicleId;
 
+    const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL'; // Replace with your Deployed URL
 
+    document.getElementById('checklistForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
 
-function submitChecklist() {
-  const operator = document.getElementById("operator").value;
-  const vehicle = document.getElementById("vehicle").value;
+        const data = {
+            v_id: vehicleId,
+            operator: document.getElementById('operator').value,
+            status: "Approved"
+        };
 
-  const approved =
-    document.getElementById("brake").checked &&
-    document.getElementById("light").checked &&
-    document.getElementById("horn").checked &&
-    document.getElementById("tyre").checked;
-
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      operator: operator,
-      vehicle: vehicle,
-      approved: approved
-    })
-  })
-  .then(res => res.json())
-  .then(() => {
-    alert(approved ? "Checklist Approved" : "Checklist Not Approved");
-  });
-}
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', // Required for Google Scripts
+            cache: 'no-cache',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then(() => {
+            alert("Safety Status Approved! You may now proceed to biometric verification.");
+            btn.innerHTML = 'AUTHORIZED';
+            btn.style.backgroundColor = '#2c3e50';
+        }).catch(error => {
+            console.error('Error!', error.message);
+            alert("Connection error. Try again.");
+            btn.disabled = false;
+        });
+    });
 </script>
 
 </body>
